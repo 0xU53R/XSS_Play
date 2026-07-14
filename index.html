@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>XSS Playground</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: #eee;
+        padding: 30px;
+    }
+
+    .box {
+        max-width: 700px;
+        margin: auto;
+        background: #222;
+        padding: 25px;
+        border-radius: 10px;
+    }
+
+    input, button {
+        padding: 10px;
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    button {
+        background: #00c853;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #00a844;
+    }
+
+    #output {
+        margin-top: 20px;
+        background: #000;
+        padding: 15px;
+        min-height: 50px;
+        border-radius: 5px;
+    }
+
+    .hint {
+        color: #aaa;
+        font-size: 14px;
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>🧪 XSS Playground</h1>
+
+<p>
+This page is intentionally vulnerable for learning DOM XSS concepts.
+</p>
+
+<input id="name" placeholder="Enter text">
+
+<button onclick="showMessage()">Submit</button>
+
+<div id="output"></div>
+
+<p class="hint">
+Try entering normal text and observe how the page behaves.
+</p>
+
+</div>
+
+
+<script>
+
+function showMessage(){
+
+    let input = document.getElementById("name").value;
+
+    // INTENTIONALLY UNSAFE:
+    // Used only for your private XSS lab.
+    document.getElementById("output").innerHTML =
+        "Hello " + input;
+
+}
+
+</script>
+
+</body>
+</html>
