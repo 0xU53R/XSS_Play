@@ -2,78 +2,153 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>☠️ GitHub Pages XSS Playground</title>
+<title>XSS Explained - History & Major Incidents</title>
 <style>
-    body { font-family: monospace; background:#000; color:#0f0; padding:20px; }
-    .box { max-width:900px; margin:auto; background:#111; padding:25px; border:3px solid #f00; }
-    input, textarea { width:100%; padding:12px; background:#222; color:#0f0; border:2px solid #f00; margin:10px 0; }
-    button { padding:15px 25px; background:#c00; color:white; border:none; font-weight:bold; cursor:pointer; }
-    .output { padding:20px; background:#000; border:2px dashed #f00; margin:15px 0; min-height:60px; }
-    .red { color:#f66; }
+    body { 
+        font-family: Arial, sans-serif; 
+        background: #0f0f0f; 
+        color: #ddd; 
+        line-height: 1.7; 
+        padding: 30px; 
+    }
+    .container { 
+        max-width: 900px; 
+        margin: auto; 
+        background: #1a1a1a; 
+        padding: 40px; 
+        border-radius: 12px; 
+        border: 2px solid #00cc88; 
+    }
+    h1, h2, h3 { color: #00ffaa; }
+    h1 { text-align: center; }
+    a { color: #00ffcc; }
+    .section { margin: 35px 0; }
+    .incident { 
+        background: #222; 
+        padding: 20px; 
+        border-left: 6px solid #ff5555; 
+        margin: 20px 0; 
+        border-radius: 6px; 
+    }
+    ul { line-height: 1.8; }
 </style>
 </head>
 <body>
-<div class="box">
-    <h1 class="red">☠️ GITHUB PAGES MAX VULNERABLE PLAYGROUND ☠️</h1>
-    <p>GitHub CSP is strict — only certain vectors work.</p>
+<div class="container">
+    <h1>Cross-Site Scripting (XSS)</h1>
+    <p style="text-align:center; font-size:18px;">One of the most common and dangerous web vulnerabilities</p>
 
-    <h2>1. innerHTML + DOM XSS (Most Reliable on GitHub)</h2>
-    <textarea id="in1" rows="4" placeholder="Paste payload here..."></textarea>
-    <button onclick="sink1()">Inject via innerHTML</button>
-    <div id="out1" class="output"></div>
+    <div class="section">
+        <h2>What is XSS?</h2>
+        <p>
+            Cross-Site Scripting (XSS) is a security vulnerability that allows attackers to inject malicious client-side scripts 
+            (usually JavaScript) into web pages viewed by other users. When the victim's browser executes the injected script, 
+            the attacker can steal cookies, session tokens, sensitive data, or perform actions on behalf of the victim.
+        </p>
+    </div>
 
-    <h2>2. SVG + MathML + Template Vectors</h2>
-    <input id="in2" placeholder="<svg><desc><![CDATA[</desc><script>alert(1)</script>]]></svg>">
-    <button onclick="sink2()">Inject SVG/MathML</button>
-    <div id="out2" class="output"></div>
+    <div class="section">
+        <h2>Types of XSS</h2>
+        <ul>
+            <li><strong>Reflected XSS</strong>: Malicious script is reflected off a web server (e.g., via URL parameters). The script is not stored.</li>
+            <li><strong>Stored XSS</strong>: Malicious script is permanently stored on the server (in a database, comment, etc.) and served to users.</li>
+            <li><strong>DOM-based XSS</strong>: The vulnerability exists in client-side code (JavaScript) rather than server-side code. The payload never reaches the server.</li>
+        </ul>
+    </div>
 
-    <h2>3. URL Hash + Search Reflection</h2>
-    <button onclick="urlSinks()">Test Hash & Query Params</button>
-    <div id="out3" class="output"></div>
+    <div class="section">
+        <h2>History of XSS</h2>
+        <p>
+            The concept of XSS was first publicly discussed in the late 1990s. The term "Cross-Site Scripting" was coined around 2000.
+            One of the earliest documented cases was in 1999 when a vulnerability in Hotmail allowed attackers to steal session cookies.
+        </p>
+        <p>
+            In the early 2000s, XSS became one of the most prevalent web vulnerabilities as dynamic web applications grew rapidly.
+            The Open Web Application Security Project (OWASP) has consistently ranked XSS in its Top 10 web vulnerabilities for many years.
+        </p>
+    </div>
 
-    <h2>4. Persistent (localStorage)</h2>
-    <input id="in4" placeholder="Persistent XSS">
-    <button onclick="storeXSS()">Save & Show</button>
-    <div id="out4" class="output"></div>
+    <div class="section">
+        <h2>Major XSS Incidents</h2>
+        
+        <div class="incident">
+            <h3>2005 – MySpace Samy Worm</h3>
+            <p>
+                One of the most famous XSS attacks in history. Samy Kamkar created a worm that spread via MySpace profiles. 
+                Within hours, over one million users were infected. The worm added "Samy is my hero" to victims' profiles and 
+                stole their session cookies.
+            </p>
+        </div>
+
+        <div class="incident">
+            <h3>2008 – Twitter XSS Attack</h3>
+            <p>
+                Attackers exploited a reflected XSS vulnerability on Twitter, allowing them to post tweets on behalf of other users.
+            </p>
+        </div>
+
+        <div class="incident">
+            <h3>2010 – PayPal Persistent XSS</h3>
+            <p>
+                A stored XSS vulnerability allowed attackers to inject malicious JavaScript that stole user credentials.
+            </p>
+        </div>
+
+        <div class="incident">
+            <h3>2014 – eBay XSS Vulnerability</h3>
+            <p>
+                Multiple XSS flaws were discovered that could have allowed attackers to steal session information from millions of users.
+            </p>
+        </div>
+
+        <div class="incident">
+            <h3>2018 – British Airways Data Breach</h3>
+            <p>
+                Attackers used Magecart-style skimming scripts (often delivered via XSS or supply chain attacks) to steal payment card details 
+                from the checkout page. Over 380,000 payment cards were compromised.
+            </p>
+        </div>
+
+        <div class="incident">
+            <h3>2020s – Ongoing Supply Chain &amp; DOM XSS Attacks</h3>
+            <p>
+                Modern attacks frequently target third-party libraries, advertisements, and complex JavaScript frameworks. 
+                DOM-based XSS has become increasingly common due to heavy client-side rendering in modern web apps.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Impact of XSS Attacks</h2>
+        <ul>
+            <li>Account takeover</li>
+            <li>Session hijacking</li>
+            <li>Stealing sensitive user data</li>
+            <li>Defacement of websites</li>
+            <li>Spreading malware or worms</li>
+            <li>Keylogging and form grabbing</li>
+            <li>Redirecting users to phishing sites</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Prevention</h2>
+        <p>
+            Modern web frameworks provide built-in protection, but developers must still be careful with user input. 
+            Key defenses include:
+        </p>
+        <ul>
+            <li>Input validation &amp; output encoding</li>
+            <li>Content Security Policy (CSP)</li>
+            <li>Using secure frameworks with auto-escaping</li>
+            <li>HTTPOnly and Secure cookies</li>
+            <li>Subresource Integrity (SRI) for third-party scripts</li>
+        </ul>
+    </div>
+
+    <p style="text-align:center; margin-top:50px; color:#888;">
+        Educational page for security awareness • Hosted on GitHub Pages
+    </p>
 </div>
-
-<script>
-// Works better on GitHub Pages
-function sink1() {
-    const payload = document.getElementById('in1').value;
-    document.getElementById('out1').innerHTML = payload;
-}
-
-function sink2() {
-    const payload = document.getElementById('in2').value;
-    document.getElementById('out2').innerHTML = payload;
-}
-
-function urlSinks() {
-    let html = `<b>Hash:</b> ${decodeURIComponent(location.hash.slice(1) || 'none')}<br>`;
-    html += `<b>Search:</b> ${decodeURIComponent(location.search)}<br>`;
-    
-    const params = new URLSearchParams(location.search);
-    if (params.has('x')) {
-        html += `<span class="red">XSS from ?x= → ${params.get('x')}</span>`;
-    }
-    
-    document.getElementById('out3').innerHTML = html;
-}
-
-function storeXSS() {
-    const val = document.getElementById('in4').value;
-    localStorage.setItem('xss', val);
-    document.getElementById('out4').innerHTML = `<b>STORED:</b><br>` + val;
-}
-
-// Auto load stored
-document.getElementById('out4').innerHTML = `<b>STORED:</b><br>` + (localStorage.getItem('xss') || "Nothing yet");
-
-// Auto hash trigger
-if (location.hash) {
-    document.getElementById('out3').innerHTML += `<br><span class="red">HASH TRIGGERED: ${decodeURIComponent(location.hash.slice(1))}</span>`;
-}
-</script>
 </body>
 </html>
