@@ -2,95 +2,163 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>XSS Playground</title>
-
+<title>XSS Playground - MAXIMUM VULNERABILITY</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #111;
-        color: #eee;
-        padding: 30px;
-    }
-
-    .box {
-        max-width: 700px;
-        margin: auto;
-        background: #222;
-        padding: 25px;
-        border-radius: 10px;
-    }
-
-    input, button {
-        padding: 10px;
-        width: 100%;
-        margin-top: 10px;
-        border-radius: 5px;
-        border: none;
-    }
-
-    button {
-        background: #00c853;
-        color: white;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background: #00a844;
-    }
-
-    #output {
-        margin-top: 20px;
-        background: #000;
-        padding: 15px;
-        min-height: 50px;
-        border-radius: 5px;
-    }
-
-    .hint {
-        color: #aaa;
-        font-size: 14px;
-    }
+    body { font-family: Arial, sans-serif; background: #0a0a0a; color: #0f0; padding: 20px; }
+    .box { max-width: 800px; margin: auto; background: #111; padding: 30px; border: 2px solid #f00; border-radius: 10px; }
+    input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; background: #222; color: #0f0; border: 1px solid #f00; }
+    button { padding: 12px; margin: 5px; background: #f00; color: white; border: none; cursor: pointer; font-weight: bold; }
+    button:hover { background: #ff5555; }
+    .output { margin: 15px 0; padding: 15px; background: #000; border: 1px dashed #f00; min-height: 40px; }
+    .warning { color: #ff0; font-size: 18px; text-align: center; }
 </style>
-
 </head>
-
 <body>
-
 <div class="box">
+    <h1 style="color:red">☠️ MAXIMUM VULNERABLE XSS PLAYGROUND ☠️</h1>
+    <p class="warning">A literal fly could pwn this page.</p>
 
-<h1>🧪 XSS Playground</h1>
+    <h2>1. Classic DOM innerHTML</h2>
+    <input id="in1" placeholder="Try: <script>alert(1)</script>">
+    <button onclick="sink1()">Sink 1</button>
+    <div id="out1" class="output"></div>
 
-<p>
-This page is intentionally vulnerable for learning DOM XSS concepts.
-</p>
+    <h2>2. Multiple Dangerous Sinks</h2>
+    <input id="in2" placeholder="Try payloads here">
+    <button onclick="sink2()">Sink 2 (innerHTML + outerHTML + eval)</button>
+    <div id="out2" class="output"></div>
 
-<input id="name" placeholder="Enter text">
+    <h2>3. document.write + document.writeln</h2>
+    <input id="in3" placeholder="<script>alert('write')</script>">
+    <button onclick="sink3()">Sink 3 (document.write)</button>
 
-<button onclick="showMessage()">Submit</button>
+    <h2>4. URL / Query String / Hash Reflected</h2>
+    <button onclick="urlSinks()">Trigger URL/Hash/Location Sinks</button>
+    <div id="out4" class="output"></div>
 
-<div id="output"></div>
+    <h2>5. Event Handlers + Attributes</h2>
+    <textarea id="in5" placeholder="onerror=alert(1) or svg onload etc"></textarea>
+    <button onclick="sink5()">Inject as HTML</button>
+    <div id="out5" class="output"></div>
 
-<p class="hint">
-Try entering normal text and observe how the page behaves.
-</p>
+    <h2>6. Stored-like (localStorage persistence)</h2>
+    <input id="in6" placeholder="Persistent XSS">
+    <button onclick="storeXSS()">Save & Load</button>
+    <div id="out6" class="output"></div>
 
+    <p class="warning">
+        Try these payloads anywhere:<br>
+        <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> |
+        <code>&lt;img src=x onerror=alert(1)&gt;</code> |
+        <code>&lt;svg/onload=alert(1)&gt;</code> |
+        <code>javascript:alert(1)</code> |
+        <code>"&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code>
+    </p>
 </div>
 
-
 <script>
+// ==================== SUPER VULNERABLE SINKS ====================
 
-function showMessage(){
-
-    let input = document.getElementById("name").value;
-
-    // INTENTIONALLY UNSAFE:
-    // Used only for your private XSS lab.
-    document.getElementById("output").innerHTML =
-        "Hello " + input;
-
+function sink1() {
+    const val = document.getElementById('in1').value;
+    document.getElementById('out1').innerHTML = "Hello: " + val;
 }
 
-</script>
+function sink2() {
+    const val = document.getElementById('in2').value;
+    const out = document.getElementById('out2');
+    
+    out.innerHTML = `<div title="${val}">Hover me</div>`;
+    out.outerHTML = `<div class="output">${val}</div>`;   // dangerous
+    try { eval(val); } catch(e) {}                         // eval sink
+}
 
+function sink3() {
+    const val = document.getElementById('in3').value;
+    document.write("<h2 style='color:red'>DOCUMENT.WRITE EXECUTED:</h2>" + val + "<br>");
+    document.writeln("<script>console.log('writeln executed')</script>");
+}
+
+function sink5() {
+    const val = document.getElementById('in5').value;
+    document.getElementById('out5').innerHTML = val;
+}
+
+// URL / Location sinks
+function urlSinks() {
+    let html = "";
+    
+    // Reflected from location
+    html += "<b>location.href:</b> " + location.href + "<br>";
+    html += "<b>location.hash:</b> " + decodeURIComponent(location.hash.slice(1)) + "<br>";
+    html += "<b>location.search:</b> " + decodeURIComponent(location.search) + "<br>";
+    
+    // Simulate query param reflection
+    const params = new URLSearchParams(location.search);
+    if (params.has('q')) {
+        html += "<b>Query ?q= :</b> " + params.get('q');
+    }
+    
+    document.getElementById('out4').innerHTML = html;
+    
+    // Auto trigger on hash
+    if (location.hash) {
+        document.getElementById('out4').innerHTML += "<br><span style='color:red'>HASH XSS TRIGGERED: " + 
+            decodeURIComponent(location.hash.slice(1)) + "</span>";
+    }
+}
+
+// Stored XSS simulation
+function storeXSS() {
+    const val = document.getElementById('in6').value;
+    localStorage.setItem('xss', val);
+    loadStoredXSS();
+}
+
+function loadStoredXSS() {
+    const saved = localStorage.getItem('xss') || "No stored XSS yet";
+    document.getElementById('out6').innerHTML = 
+        "<b>Persistent Stored XSS:</b><br>" + saved;
+}
+
+// Auto-load stored XSS
+loadStoredXSS();
+
+// ==================== GLOBAL DANGEROUS LISTENERS ====================
+
+// Click anywhere can be dangerous
+document.addEventListener('click', (e) => {
+    if (e.target.tagName === "DIV") {
+        try { eval(e.target.innerText); } catch(e) {}
+    }
+});
+
+// Keyboard sink
+document.addEventListener('keypress', (e) => {
+    if (e.key === "Enter") {
+        console.log("Keyboard XSS vector ready");
+    }
+});
+
+// Hashchange sink
+window.addEventListener('hashchange', () => {
+    const payload = decodeURIComponent(location.hash.slice(1));
+    document.getElementById('out4').innerHTML = 
+        "<h2 style='color:red'>HASHCHANGE XSS FIRED:</h2>" + payload;
+});
+
+// onload / onerror global
+window.addEventListener('error', () => {
+    console.log("%c Global error handler - potential blind XSS", "color:red");
+});
+
+// Make everything dangerous
+setTimeout(() => {
+    document.body.innerHTML += `<img src="x" onerror="alert('Global onerror fly exploit!')">`;
+}, 1500);
+
+// Bonus: vulnerable template
+console.log("XSS Playground fully loaded - every sink is open");
+</script>
 </body>
 </html>
